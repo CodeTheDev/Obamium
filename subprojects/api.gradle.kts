@@ -1,0 +1,11 @@
+repositories {
+
+}
+
+dependencies {
+
+}
+
+java {
+    withJavadocJar()
+}
