@@ -85,7 +85,7 @@ index e0b1f0671d16ddddcb6725acd25a1d1d69e42701..13668e59798ecbdf49ce071f212bc26e
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/dev/codeerror/obamium/ObamiumVersionFetcher.java b/src/main/java/dev/codeerror/obamium/ObamiumVersionFetcher.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..dafc07ad0343d4dfc81efafd418df74d880acafd
+index 0000000000000000000000000000000000000000..7c3a669f55134dbc5ae796ca143f3b4ff81cb501
 --- /dev/null
 +++ b/src/main/java/dev/codeerror/obamium/ObamiumVersionFetcher.java
 @@ -0,0 +1,110 @@
@@ -128,7 +128,7 @@ index 0000000000000000000000000000000000000000..dafc07ad0343d4dfc81efafd418df74d
 +    private static final Logger LOGGER = Logger.getLogger("ObamiumVersionFetcher");
 +    private static final HttpClient client = HttpClient.newHttpClient();
 +
-+    private static final String GITHUB_FORMAT = "https://api.github.com/repos/CodeTheDev/Obamium/compare/master...%s";
++    private static final String GITHUB_FORMAT = "https://api.github.com/repos/CodeTheDev/Obamium/compare/ver/1.18...%s";
 +
 +    private static final HttpResponse.BodyHandler<JsonObject> JSON_OBJECT_BODY_HANDLER = responseInfo -> HttpResponse.BodySubscribers.mapping(
 +            HttpResponse.BodySubscribers.ofString(StandardCharsets.UTF_8),
