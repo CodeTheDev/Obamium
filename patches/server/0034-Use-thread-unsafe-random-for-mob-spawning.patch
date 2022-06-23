@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Paul Sauve <paul@technove.co>
+Date: Tue, 22 Jun 2021 15:04:37 -0500
+Subject: [PATCH] Use thread unsafe random for mob spawning
+
+
+diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
+index 8d440e4069c4ecc4c0155e52c065c0a4613d91f2..da3f151c4c86c064e4554cfdba6b113854beda22 100644
+--- a/src/main/java/net/minecraft/world/level/Level.java
++++ b/src/main/java/net/minecraft/world/level/Level.java
+@@ -272,7 +272,7 @@ public abstract class Level implements LevelAccessor, AutoCloseable {
+ 
+     public abstract ResourceKey<LevelStem> getTypeKey();
+ 
+-    protected final io.papermc.paper.util.math.ThreadUnsafeRandom randomTickRandom = new io.papermc.paper.util.math.ThreadUnsafeRandom(java.util.concurrent.ThreadLocalRandom.current().nextLong()); // Pufferfish - move thread unsafe random initialization
++    protected final io.papermc.paper.util.math.ThreadUnsafeRandom randomTickRandom = new io.papermc.paper.util.math.ThreadUnsafeRandom(java.util.concurrent.ThreadLocalRandom.current().nextLong()); public net.minecraft.util.RandomSource getThreadUnsafeRandom() { return this.randomTickRandom; } // Pufferfish - move thread unsafe random initialization // Pufferfish - getter
+ 
+     // Pufferfish start - ensure these get inlined
+     private final int minBuildHeight, minSection, height, maxBuildHeight, maxSection;
+diff --git a/src/main/java/net/minecraft/world/level/NaturalSpawner.java b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
+index e31a2eea9a62ab2c0bed1a97dab6bae231b8cd8b..1f4acc1a2605f1e9051126fc811a5479351fc61a 100644
+--- a/src/main/java/net/minecraft/world/level/NaturalSpawner.java
++++ b/src/main/java/net/minecraft/world/level/NaturalSpawner.java
+@@ -414,12 +414,12 @@ public final class NaturalSpawner {
+         }
+     }
+ 
+-    private static BlockPos getRandomPosWithin(Level world, LevelChunk chunk) {
++    private static BlockPos getRandomPosWithin(ServerLevel world, LevelChunk chunk) { // Pufferfish - accept serverlevel
+         ChunkPos chunkcoordintpair = chunk.getPos();
+-        int i = chunkcoordintpair.getMinBlockX() + world.random.nextInt(16);
+-        int j = chunkcoordintpair.getMinBlockZ() + world.random.nextInt(16);
++        int i = chunkcoordintpair.getMinBlockX() + world.getThreadUnsafeRandom().nextInt(16); // Pufferfish - use thread unsafe random
++        int j = chunkcoordintpair.getMinBlockZ() + world.getThreadUnsafeRandom().nextInt(16); // Pufferfish
+         int k = chunk.getHeight(Heightmap.Types.WORLD_SURFACE, i, j) + 1;
+-        int l = Mth.randomBetweenInclusive(world.random, world.getMinBuildHeight(), k);
++        int l = Mth.randomBetweenInclusive(world.getThreadUnsafeRandom(), world.getMinBuildHeight(), k); // Pufferfish
+ 
+         return new BlockPos(i, l, j);
+     }

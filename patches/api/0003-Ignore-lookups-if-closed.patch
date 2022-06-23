@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Paul <paul@technove.co>
+Date: Tue, 6 Jul 2021 17:51:18 -0500
+Subject: [PATCH] Ignore lookups if closed
+
+
+diff --git a/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java b/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
+index 16d57c9a1ea29761eebc10e907fb3d19a1be3a9f..4f736a267eb4c8a3bedb2d02fb30468484b991d5 100644
+--- a/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
++++ b/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
+@@ -46,6 +46,8 @@ public final class PluginClassLoader extends URLClassLoader { // Spigot
+     private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
+     private java.util.logging.Logger logger; // Paper - add field
+ 
++    private boolean closed = false; // Pufferfish
++
+     static {
+         ClassLoader.registerAsParallelCapable();
+     }
+@@ -159,7 +161,7 @@ public final class PluginClassLoader extends URLClassLoader { // Spigot
+         }
+         Class<?> result = classes.get(name);
+ 
+-        if (result == null) {
++        if (result == null && !this.closed) { // Pufferfish
+             String path = name.replace('.', '/').concat(".class");
+             JarEntry entry = jar.getJarEntry(path);
+ 
+@@ -214,6 +216,7 @@ public final class PluginClassLoader extends URLClassLoader { // Spigot
+         try {
+             super.close();
+         } finally {
++            this.closed = true; // Pufferfish
+             jar.close();
+         }
+     }

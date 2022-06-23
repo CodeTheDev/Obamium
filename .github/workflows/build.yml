@@ -23,5 +23,4 @@ jobs:
             git config --global user.name "GitHub Actions"
             chmod +x gradlew
             ./gradlew applyPatches --stacktrace
-            ./gradlew build --stacktrace
-            
+            ./gradlew createReobfPaperclipJar --stacktrace
