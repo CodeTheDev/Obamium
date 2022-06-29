@@ -85,7 +85,7 @@ index b0390eedb507d27426d1e1d73bd4ab63aec89ebe..6af519f2c3b5eeb796251dbf713a18e6
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
 diff --git a/src/main/java/dev/codeerror/obamium/ObamiumVersionFetcher.java b/src/main/java/dev/codeerror/obamium/ObamiumVersionFetcher.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..4a801e78cf1ef5e17576c8cd301eaef33e896634
+index 0000000000000000000000000000000000000000..f10baacbd7c6d1b9905583d3e13d239175dd28c8
 --- /dev/null
 +++ b/src/main/java/dev/codeerror/obamium/ObamiumVersionFetcher.java
 @@ -0,0 +1,110 @@
@@ -180,7 +180,7 @@ index 0000000000000000000000000000000000000000..4a801e78cf1ef5e17576c8cd301eaef3
 +            case -1 -> text("You are running an unsupported version of Obamium.", DARK_RED);
 +            case 0 -> text("You are running the latest version of Obamium!", DARK_GREEN);
 +            default -> MiniMessage.miniMessage()
-+                    .deserialize("<red>You are running <gold>" + versionDiff + "</gold> version" + (versionDiff == 1 ? "" : "s") + "behind! " +
++                    .deserialize("<red>You are running <gold>" + versionDiff + "</gold> version" + (versionDiff == 1 ? "" : "s") + " behind! " +
 +                            "<yellow>Please update <u>as soon as possible</u> in order to receive new features.");
 +        };
 +    }
