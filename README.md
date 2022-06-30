@@ -3,3 +3,6 @@
 Finally, Obamium.
 
 ![obamium](https://i.codeerror.dev/obamium.jpg)
+
+# bStats
+[![bStats Graph](https://bstats.org/signatures/server-implementation/Obamium.svg)](https://bstats.org/plugin/server-implementation/Obamium)
