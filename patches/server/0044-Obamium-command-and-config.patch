@@ -100,10 +100,10 @@ index 0000000000000000000000000000000000000000..1ea7a7b90464bcfc865ccfd9644b8389
 +}
 diff --git a/src/main/java/dev/codeerror/obamium/ObamiumConfig.java b/src/main/java/dev/codeerror/obamium/ObamiumConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..eae1952f0c0ac432e15dde0e9289861848dc8209
+index 0000000000000000000000000000000000000000..b625877cab9998813e478fc599551e8ec8b483ff
 --- /dev/null
 +++ b/src/main/java/dev/codeerror/obamium/ObamiumConfig.java
-@@ -0,0 +1,80 @@
+@@ -0,0 +1,81 @@
 +package dev.codeerror.obamium;
 +
 +import org.simpleyaml.configuration.comments.CommentType;
@@ -120,6 +120,7 @@ index 0000000000000000000000000000000000000000..eae1952f0c0ac432e15dde0e92898618
 +
 +    public static void loadConfig() throws IOException {
 +        File configFile = new File("obamium.yml");
++        config.options().useComments(true); // Keep comments when loading config.
 +
 +        if (configFile.exists()) {
 +            try {
