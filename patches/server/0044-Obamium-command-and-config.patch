@@ -1,0 +1,231 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: CodeTheDev <code@codeslab.ca>
+Date: Sat, 9 Jul 2022 16:06:23 -0400
+Subject: [PATCH] Obamium command and config
+
+
+diff --git a/src/main/java/dev/codeerror/obamium/ObamiumCommand.java b/src/main/java/dev/codeerror/obamium/ObamiumCommand.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..8cd656ec96e681c79b85d40fe2cc00eb768b4269
+--- /dev/null
++++ b/src/main/java/dev/codeerror/obamium/ObamiumCommand.java
+@@ -0,0 +1,88 @@
++package dev.codeerror.obamium;
++
++import com.google.common.base.Joiner;
++import net.kyori.adventure.text.Component;
++import net.kyori.adventure.text.format.NamedTextColor;
++import net.kyori.adventure.text.minimessage.MiniMessage;
++import net.minecraft.server.MinecraftServer;
++import org.bukkit.Bukkit;
++import org.bukkit.Location;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandSender;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++
++import java.io.IOException;
++import java.util.List;
++import java.util.stream.Collectors;
++
++public class ObamiumCommand extends Command {
++
++    private static final String BASE_PERMISSION = "bukkit.command.obamium.";
++    private static final List<String> SUBCOMMANDS = List.of("reload", "version");
++
++    public ObamiumCommand(String name) {
++        super(name);
++        this.description = "Obamium related commands";
++        this.usageMessage = "/obamium [" + Joiner.on(" | ").join(SUBCOMMANDS) + "]";
++        this.setPermission("bukkit.command.obamium;" + Joiner.on(";").join(SUBCOMMANDS.stream().map(s -> BASE_PERMISSION + s).collect(Collectors.toSet())));
++    }
++
++    public static void register() {
++        MinecraftServer.getServer().server.getCommandMap().register("obamium", "Obamium", new ObamiumCommand("obamium"));
++    }
++
++    private boolean testPermission(@NotNull CommandSender sender, String permission) {
++        if (sender.hasPermission(BASE_PERMISSION + permission) || sender.hasPermission("bukkit.command.obamium")) return true;
++        sender.sendMessage(Bukkit.permissionMessage());
++        return false;
++    }
++
++    @Override
++    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args, @Nullable Location location) throws IllegalArgumentException {
++        if (args.length == 1) {
++            return SUBCOMMANDS;
++        }
++        return List.of();
++    }
++
++    @Override
++    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
++        if (!testPermission(sender)) return true;
++        Component chatPrefix = MiniMessage.miniMessage().deserialize("<blue><bold>Obamium</bold></blue> <aqua>\u27a4</aqua> ");
++        if (args.length == 0) {
++            sender.sendMessage(chatPrefix.append(Component.text("Usage: " + this.usageMessage, NamedTextColor.RED)));
++            return false;
++        }
++        if (SUBCOMMANDS.contains(args[0].toLowerCase())) {
++            if (!testPermission(sender, args[0].toLowerCase())) return true;
++        }
++        switch (args[0].toLowerCase()) {
++            case "reload":
++                if (!testPermission(sender, "reload")) break;
++                try {
++                    ObamiumConfig.loadConfig();
++                } catch (IOException e) {
++                    sender.sendMessage(chatPrefix.append(Component.text("Failed to reload configuration. Please check console for more information.", NamedTextColor.RED)));
++                    e.printStackTrace();
++                    break;
++                }
++                MinecraftServer.getServer().server.reloadCount++;
++                sender.sendMessage(chatPrefix.append(Component.text("Obamium configuration has been successfully reloaded.", NamedTextColor.GREEN)));
++                break;
++            case "ver":
++                if (!testPermission(sender, "version")) break;
++            case "version":
++                Command version = MinecraftServer.getServer().server.getCommandMap().getCommand("version");
++                if (version != null) {
++                    version.execute(sender, commandLabel, new String[0]);
++                    break;
++                }
++            default:
++                sender.sendMessage(chatPrefix.append(Component.text("Usage: " + this.usageMessage, NamedTextColor.RED)));
++                return false;
++        }
++        return true;
++    }
++
++}
+diff --git a/src/main/java/dev/codeerror/obamium/ObamiumConfig.java b/src/main/java/dev/codeerror/obamium/ObamiumConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8dbd1aacb31fbbb018d600c4c5df96ed8637a98
+--- /dev/null
++++ b/src/main/java/dev/codeerror/obamium/ObamiumConfig.java
+@@ -0,0 +1,80 @@
++package dev.codeerror.obamium;
++
++import org.simpleyaml.configuration.comments.CommentType;
++import org.simpleyaml.configuration.file.YamlFile;
++
++import java.io.File;
++import java.io.IOException;
++
++public class ObamiumConfig {
++
++    private static final YamlFile config = new YamlFile();
++
++    public static boolean offlineWarning;
++
++    public static void loadConfig() throws IOException {
++        File configFile = new File("obamium.yml");
++
++        if (configFile.exists()) {
++            try {
++                config.load(configFile);
++            } catch (IOException e) {
++                throw new IOException(e);
++            }
++        }
++
++        setHeader(
++                "Obamium Configuration\n",
++                "Finally, Obamium.",
++                "The most swag server for the most epic of gamers(tm).",
++                "https://github.com/CodeTheDev/Obamium"
++        );
++        getString("version", "1.0", "DO NOT CHANGE THIS, please god don't change this. <3");
++
++        offlineWarning = getBoolean("offline-warning", true,
++                "Whether or not to display an offline server warning",
++                "on server startup if the server is running in offline mode.",
++                "Defaults to true."
++        );
++
++        config.save(configFile);
++
++    }
++
++    private static boolean getBoolean(String key, boolean defaultValue, String... comment) {
++        createEntry(key, defaultValue, comment);
++        return config.getBoolean(key, defaultValue);
++    }
++
++    private static int getInt(String key, int defaultValue, String... comment) {
++        createEntry(key, defaultValue, comment);
++        return config.getInt(key, defaultValue);
++    }
++
++    private static double getDouble(String key, double defaultValue, String... comment) {
++        createEntry(key, defaultValue, comment);
++        return config.getDouble(key, defaultValue);
++    }
++
++    private static long getLong(String key, long defaultValue, String... comment) {
++        createEntry(key, defaultValue, comment);
++        return config.getLong(key, defaultValue);
++    }
++
++    private static String getString(String key, String defaultValue, String... comment) {
++        createEntry(key, defaultValue, comment);
++        return config.getString(key, defaultValue);
++    }
++
++    private static void setHeader(String... header) {
++        if (config.getHeader() == null) config.setHeader(String.join("\n", header));
++    }
++
++    private static void createEntry(String key, Object defaultValue, String... comment) {
++        if (!config.contains(key)) {
++            config.set(key, defaultValue);
++            config.setComment(key, String.join("\n", comment), CommentType.BLOCK);
++        }
++    }
++
++}
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index 5d6ceeecfbb55a1bfe77a1f1ac39b02993e714e3..b88d3e4ab245960494043e2c05c87bc3c34f788f 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -228,6 +228,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         // Paper end
+         gg.pufferfish.pufferfish.PufferfishConfig.load(); // Pufferfish
+         gg.pufferfish.pufferfish.PufferfishCommand.init(); // Pufferfish
++        dev.codeerror.obamium.ObamiumConfig.loadConfig(); // Obamium
++        dev.codeerror.obamium.ObamiumCommand.register(); // Obamium
+ 
+         this.setPvpAllowed(dedicatedserverproperties.pvp);
+         this.setFlightAllowed(dedicatedserverproperties.allowFlight);
+@@ -282,17 +284,21 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         // CraftBukkit end
+ 
+         if (!this.usesAuthentication()) {
+-            DedicatedServer.LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+-            DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
+-            // Spigot start
+-            if (org.spigotmc.SpigotConfig.bungee) {
+-                DedicatedServer.LOGGER.warn("Whilst this makes it possible to use BungeeCord, unless access to your server is properly restricted, it also opens up the ability for hackers to connect with any username they choose.");
+-                DedicatedServer.LOGGER.warn("Please see http://www.spigotmc.org/wiki/firewall-guide/ for further information.");
+-            } else {
+-                DedicatedServer.LOGGER.warn("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
++            // Obamium start - toggleable offline console warning.
++            if (dev.codeerror.obamium.ObamiumConfig.offlineWarning) {
++                DedicatedServer.LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
++                DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
++                // Spigot start
++                if (org.spigotmc.SpigotConfig.bungee) {
++                    DedicatedServer.LOGGER.warn("Whilst this makes it possible to use BungeeCord, unless access to your server is properly restricted, it also opens up the ability for hackers to connect with any username they choose.");
++                    DedicatedServer.LOGGER.warn("Please see http://www.spigotmc.org/wiki/firewall-guide/ for further information.");
++                } else {
++                    DedicatedServer.LOGGER.warn("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
++                }
++                // Spigot end
++                DedicatedServer.LOGGER.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
+             }
+-            // Spigot end
+-            DedicatedServer.LOGGER.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
++            // Obamium end
+         }
+ 
+ 
