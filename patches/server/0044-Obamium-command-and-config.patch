@@ -6,7 +6,7 @@ Subject: [PATCH] Obamium command and config
 
 diff --git a/src/main/java/dev/codeerror/obamium/ObamiumCommand.java b/src/main/java/dev/codeerror/obamium/ObamiumCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8cd656ec96e681c79b85d40fe2cc00eb768b4269
+index 0000000000000000000000000000000000000000..1ea7a7b90464bcfc865ccfd9644b8389e30483d4
 --- /dev/null
 +++ b/src/main/java/dev/codeerror/obamium/ObamiumCommand.java
 @@ -0,0 +1,88 @@
@@ -100,7 +100,7 @@ index 0000000000000000000000000000000000000000..8cd656ec96e681c79b85d40fe2cc00eb
 +}
 diff --git a/src/main/java/dev/codeerror/obamium/ObamiumConfig.java b/src/main/java/dev/codeerror/obamium/ObamiumConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..e8dbd1aacb31fbbb018d600c4c5df96ed8637a98
+index 0000000000000000000000000000000000000000..eae1952f0c0ac432e15dde0e9289861848dc8209
 --- /dev/null
 +++ b/src/main/java/dev/codeerror/obamium/ObamiumConfig.java
 @@ -0,0 +1,80 @@
