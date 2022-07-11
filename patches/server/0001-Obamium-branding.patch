@@ -49,7 +49,7 @@ index 2374cc9bab5039d0a0dc11d4b2ec573ab75778a7..992c135498571a61f8e9dc5aaf2ef69b
      standardInput = System.`in`
      workingDir = rootProject.layout.projectDirectory
 diff --git a/src/main/java/com/destroystokyo/paper/Metrics.java b/src/main/java/com/destroystokyo/paper/Metrics.java
-index 7b1843e16745ca8db2244e17490d291401f22679..f6ec4e082631421a037f3512b0355108b8341beb 100644
+index 7b1843e16745ca8db2244e17490d291401f22679..f5b64d494299f372379ef5fcf795cc8abd3169a9 100644
 --- a/src/main/java/com/destroystokyo/paper/Metrics.java
 +++ b/src/main/java/com/destroystokyo/paper/Metrics.java
 @@ -593,7 +593,7 @@ public class Metrics {
@@ -61,11 +61,32 @@ index 7b1843e16745ca8db2244e17490d291401f22679..f6ec4e082631421a037f3512b0355108
  
                  metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
                      String minecraftVersion = Bukkit.getVersion();
-@@ -603,7 +603,7 @@ public class Metrics {
+@@ -602,8 +602,27 @@ public class Metrics {
+                 }));
  
                  metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
-                 metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
+-                metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
 -                metrics.addCustomChart(new Metrics.SimplePie("paper_version", () -> (Metrics.class.getPackage().getImplementationVersion() != null) ? Metrics.class.getPackage().getImplementationVersion() : "unknown"));
++                // Obamium start - improved online_mode pie graph.
++                metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> {
++                    if (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) {
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.onlineMode) {
++                            return "velocity";
++                        }
++                        return "offline";
++                    }
++                    if (org.spigotmc.SpigotConfig.bungee) {
++                        if (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.bungeeCord.onlineMode) {
++                            return "bungeecord";
++                        }
++                        return "offline";
++                    }
++                    if (Bukkit.getOnlineMode()) {
++                        return "online";
++                    }
++                    return "offline";
++                }));
++                // Obamium end
 +                metrics.addCustomChart(new Metrics.SimplePie("obamium_version", () -> (Metrics.class.getPackage().getImplementationVersion() != null) ? Metrics.class.getPackage().getImplementationVersion() : "unknown")); // Obamium
  
                  metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
