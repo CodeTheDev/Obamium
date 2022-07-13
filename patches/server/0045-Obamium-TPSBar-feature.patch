@@ -1,0 +1,660 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: CodeTheDev <code@codeslab.ca>
+Date: Wed, 13 Jul 2022 03:53:39 -0400
+Subject: [PATCH] Obamium TPSBar feature
+
+A modified version of Purpur's TPSBar feature.
+
+Co-authored-by: William Blake Galbreath <Blake.Galbreath@GMail.com>
+
+diff --git a/src/main/java/dev/codeerror/obamium/ObamiumConfig.java b/src/main/java/dev/codeerror/obamium/ObamiumConfig.java
+deleted file mode 100644
+index b625877cab9998813e478fc599551e8ec8b483ff..0000000000000000000000000000000000000000
+--- a/src/main/java/dev/codeerror/obamium/ObamiumConfig.java
++++ /dev/null
+@@ -1,81 +0,0 @@
+-package dev.codeerror.obamium;
+-
+-import org.simpleyaml.configuration.comments.CommentType;
+-import org.simpleyaml.configuration.file.YamlFile;
+-
+-import java.io.File;
+-import java.io.IOException;
+-
+-public class ObamiumConfig {
+-
+-    private static final YamlFile config = new YamlFile();
+-
+-    public static boolean offlineWarning;
+-
+-    public static void loadConfig() throws IOException {
+-        File configFile = new File("obamium.yml");
+-        config.options().useComments(true); // Keep comments when loading config.
+-
+-        if (configFile.exists()) {
+-            try {
+-                config.load(configFile);
+-            } catch (IOException e) {
+-                throw new IOException(e);
+-            }
+-        }
+-
+-        setHeader(
+-                "Obamium Configuration\n",
+-                "Finally, Obamium.",
+-                "The most swag server for the most epic of gamers(tm).",
+-                "https://github.com/CodeTheDev/Obamium"
+-        );
+-        getString("version", "1.0", "DO NOT CHANGE THIS, please god don't change this. <3");
+-
+-        offlineWarning = getBoolean("offline-warning", true,
+-                "Whether or not to display an offline server warning",
+-                "on server startup if the server is running in offline mode.",
+-                "Defaults to true."
+-        );
+-
+-        config.save(configFile);
+-
+-    }
+-
+-    private static boolean getBoolean(String key, boolean defaultValue, String... comment) {
+-        createEntry(key, defaultValue, comment);
+-        return config.getBoolean(key, defaultValue);
+-    }
+-
+-    private static int getInt(String key, int defaultValue, String... comment) {
+-        createEntry(key, defaultValue, comment);
+-        return config.getInt(key, defaultValue);
+-    }
+-
+-    private static double getDouble(String key, double defaultValue, String... comment) {
+-        createEntry(key, defaultValue, comment);
+-        return config.getDouble(key, defaultValue);
+-    }
+-
+-    private static long getLong(String key, long defaultValue, String... comment) {
+-        createEntry(key, defaultValue, comment);
+-        return config.getLong(key, defaultValue);
+-    }
+-
+-    private static String getString(String key, String defaultValue, String... comment) {
+-        createEntry(key, defaultValue, comment);
+-        return config.getString(key, defaultValue);
+-    }
+-
+-    private static void setHeader(String... header) {
+-        if (config.getHeader() == null) config.setHeader(String.join("\n", header));
+-    }
+-
+-    private static void createEntry(String key, Object defaultValue, String... comment) {
+-        if (!config.contains(key)) {
+-            config.set(key, defaultValue);
+-            config.setComment(key, String.join("\n", comment), CommentType.BLOCK);
+-        }
+-    }
+-
+-}
+diff --git a/src/main/java/dev/codeerror/obamium/ObamiumCommand.java b/src/main/java/dev/codeerror/obamium/command/ObamiumCommand.java
+similarity index 97%
+rename from src/main/java/dev/codeerror/obamium/ObamiumCommand.java
+rename to src/main/java/dev/codeerror/obamium/command/ObamiumCommand.java
+index 1ea7a7b90464bcfc865ccfd9644b8389e30483d4..c8d8bc3f6c1cabdde308780115496ab440a890f4 100644
+--- a/src/main/java/dev/codeerror/obamium/ObamiumCommand.java
++++ b/src/main/java/dev/codeerror/obamium/command/ObamiumCommand.java
+@@ -1,6 +1,7 @@
+-package dev.codeerror.obamium;
++package dev.codeerror.obamium.command;
+ 
+ import com.google.common.base.Joiner;
++import dev.codeerror.obamium.configuration.ObamiumConfig;
+ import net.kyori.adventure.text.Component;
+ import net.kyori.adventure.text.format.NamedTextColor;
+ import net.kyori.adventure.text.minimessage.MiniMessage;
+diff --git a/src/main/java/dev/codeerror/obamium/command/TPSBarCommand.java b/src/main/java/dev/codeerror/obamium/command/TPSBarCommand.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..237ba5ed45324c5c691a61d3973155e041d71d24
+--- /dev/null
++++ b/src/main/java/dev/codeerror/obamium/command/TPSBarCommand.java
+@@ -0,0 +1,43 @@
++package dev.codeerror.obamium.command;
++
++import com.mojang.brigadier.CommandDispatcher;
++import dev.codeerror.obamium.task.TPSBarTask;
++import io.papermc.paper.adventure.PaperAdventure;
++import net.kyori.adventure.text.Component;
++import net.kyori.adventure.text.format.NamedTextColor;
++import net.kyori.adventure.text.minimessage.MiniMessage;
++import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
++import net.minecraft.commands.CommandSourceStack;
++import net.minecraft.commands.Commands;
++import net.minecraft.commands.arguments.EntityArgument;
++import net.minecraft.server.level.ServerPlayer;
++import org.jetbrains.annotations.NotNull;
++
++import java.util.Collection;
++import java.util.Collections;
++
++public class TPSBarCommand {
++
++    public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
++        dispatcher.register(Commands.literal("tpsbar")
++                .requires(listener -> listener.hasPermission(2, "bukkit.command.obamium.tpsbar") || listener.hasPermission(2, "bukkit.command.obamium"))
++                .executes(context -> execute(context.getSource(), Collections.singleton(context.getSource().getPlayerOrException())))
++                .then(Commands.argument("targets", EntityArgument.players()).executes((context) -> execute(context.getSource(), EntityArgument.getPlayers(context, "targets"))))
++        );
++    }
++
++    private static int execute(CommandSourceStack sender, @NotNull Collection<ServerPlayer> targets) {
++        Component chatPrefix = MiniMessage.miniMessage().deserialize("<blue><bold>Obamium</bold></blue> <aqua>\u27a4</aqua> ");
++        for (ServerPlayer target : targets) {
++            boolean tpsBar = TPSBarTask.getInstance().togglePlayer(target.getBukkitEntity());
++            target.setTPSBar(tpsBar);
++            sender.sendSuccess(PaperAdventure.asVanilla(chatPrefix.append(MiniMessage.miniMessage().deserialize(
++                    "<gray>TPSBar toggled</gray> <toggle> <gray>for</gray> <yellow><target></yellow><gray>.</gray>",
++                    Placeholder.component("toggle", Component.translatable(tpsBar ? "options.on" : "options.off").color(tpsBar ? NamedTextColor.GREEN : NamedTextColor.RED)),
++                    Placeholder.parsed("target", target.getGameProfile().getName())
++            ))), false);
++        }
++        return targets.size();
++    }
++
++}
+diff --git a/src/main/java/dev/codeerror/obamium/configuration/ObamiumConfig.java b/src/main/java/dev/codeerror/obamium/configuration/ObamiumConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..600d6edc85d632e3e555625d40c5d11ce53bf5f9
+--- /dev/null
++++ b/src/main/java/dev/codeerror/obamium/configuration/ObamiumConfig.java
+@@ -0,0 +1,153 @@
++package dev.codeerror.obamium.configuration;
++
++import dev.codeerror.obamium.task.TPSBarTask;
++import net.kyori.adventure.bossbar.BossBar;
++import org.jetbrains.annotations.Nullable;
++import org.simpleyaml.configuration.comments.CommentType;
++import org.simpleyaml.configuration.file.YamlFile;
++
++import java.io.File;
++import java.io.IOException;
++
++public class ObamiumConfig {
++
++    private static final YamlFile config = new YamlFile();
++
++    public static boolean offlineWarning;
++
++    public static String tpsBarTitle;
++    public static BossBar.Overlay tpsBarOverlay;
++    public static TPSBarTask.FillMode tpsBarMode;
++    public static BossBar.Color tpsBarColourGood;
++    public static BossBar.Color tpsBarColourMed;
++    public static BossBar.Color tpsBarColourLow;
++    public static String tpsBarTextColourGood;
++    public static String tpsBarTextColourMed;
++    public static String tpsBarTextColourLow;
++    public static int tpsBarTickInterval;
++
++    public static void loadConfig() throws IOException {
++        File configFile = new File("obamium.yml");
++        config.options().useComments(true); // Keep comments when loading config.
++
++        if (configFile.exists()) {
++            try {
++                config.load(configFile);
++            } catch (IOException e) {
++                throw new IOException(e);
++            }
++        }
++
++        setHeader(
++                "Obamium Configuration\n",
++                "Finally, Obamium.",
++                "The most swag server for the most epic of gamers(tm).",
++                "https://github.com/CodeTheDev/Obamium"
++        );
++        getString("version", "1.0", "DO NOT CHANGE THIS, please god don't change this. <3");
++
++        offlineWarning = getBoolean("offline-warning", true,
++                "Whether or not to display an offline server warning",
++                "on server startup if the server is running in offline mode.",
++                "Defaults to true."
++        );
++
++        tpsBarTitle = getString("tpsbar.title", "<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms",
++                "Title of TPSBar."
++        );
++        tpsBarOverlay = BossBar.Overlay.valueOf(
++                getString("tpsbar.overlay", "NOTCHED_20",
++                        "Overlay type of TPSBar.",
++                        "Options: PROGRESS, NOTCHED_6, NOTCHED_10, NOTCHED_12, NOTCHED_20",
++                        "Defaults to NOTCHED_20."
++                )
++        );
++        tpsBarMode = TPSBarTask.FillMode.valueOf(
++                getString("tpsbar.mode", "MSPT",
++                        "Display mode of TPSBar.",
++                        "Options: TPS, MSPT, PING",
++                        "Defaults to MSPT."
++                )
++        );
++        setComment("tpsbar.colour.bar",
++                "Colour of TPSBar.",
++                "Options: PINK, BLUE, RED, GREEN, YELLOW, PURPLE, WHITE"
++        );
++        tpsBarColourGood = BossBar.Color.valueOf(
++                getString("tpsbar.colour.bar.good", "GREEN",
++                        "Colour displayed when TPS/MSPT/Ping is good."
++                )
++        );
++        tpsBarColourMed = BossBar.Color.valueOf(
++                getString("tpsbar.colour.bar.medium", "YELLOW",
++                        "Colour displayed when TPS/MSPT/Ping is medium."
++                )
++        );
++        tpsBarColourLow = BossBar.Color.valueOf(
++                getString("tpsbar.colour.bar.low", "RED",
++                        "Colour displayed when TPS/MSPT/Ping is bad."
++                )
++        );
++        setComment("tpsbar.colour.text",
++                "Colour of TPSBar text."
++        );
++        tpsBarTextColourGood = getString("tpsbar.colour.text.good","<gradient:#55ff55:#00aa00><text></gradient>",
++                "Text colour displayed when TPS/MSPT/Ping is good."
++        );
++        tpsBarTextColourMed = getString("tpsbar.colour.text.medium", "<gradient:#ffff55:#ffaa00><text></gradient>",
++                "Text colour displayed when TPS/MSPT/Ping is medium."
++        );
++        tpsBarTextColourLow = getString("tpsbar.colour.text.low", "<gradient:#ff5555:#aa0000><text></gradient>",
++                "Text colour displayed when TPS/MSPT/Ping is bad."
++        );
++        tpsBarTickInterval = getInt("tpsbar.tick-interval", 20,
++                "Tick interval of TPSBar."
++        );
++
++        config.save(configFile);
++
++    }
++
++    private static boolean getBoolean(String key, boolean defaultValue, String... comment) {
++        createEntry(key, defaultValue, comment);
++        return config.getBoolean(key, defaultValue);
++    }
++
++    private static int getInt(String key, int defaultValue, String... comment) {
++        createEntry(key, defaultValue, comment);
++        return config.getInt(key, defaultValue);
++    }
++
++    private static double getDouble(String key, double defaultValue, String... comment) {
++        createEntry(key, defaultValue, comment);
++        return config.getDouble(key, defaultValue);
++    }
++
++    private static long getLong(String key, long defaultValue, String... comment) {
++        createEntry(key, defaultValue, comment);
++        return config.getLong(key, defaultValue);
++    }
++
++    private static String getString(String key, String defaultValue, String... comment) {
++        createEntry(key, defaultValue, comment);
++        return config.getString(key, defaultValue);
++    }
++
++    private static void setComment(String key, String... comment) {
++        if (config.getComment(key) == null) config.setComment(key, String.join("\n", comment), CommentType.BLOCK);
++    }
++
++    private static void setHeader(String... header) {
++        if (config.getHeader() == null) config.setHeader(String.join("\n", header));
++    }
++
++    private static void createEntry(String key, Object defaultValue, @Nullable String... comment) {
++        if (!config.contains(key)) {
++            config.set(key, defaultValue);
++            if (comment != null) {
++                config.setComment(key, String.join("\n", comment), CommentType.BLOCK);
++            }
++        }
++    }
++
++}
+diff --git a/src/main/java/dev/codeerror/obamium/task/TPSBarTask.java b/src/main/java/dev/codeerror/obamium/task/TPSBarTask.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..09e060e876581aadd4b4bd22e116286b036ce8dd
+--- /dev/null
++++ b/src/main/java/dev/codeerror/obamium/task/TPSBarTask.java
+@@ -0,0 +1,214 @@
++package dev.codeerror.obamium.task;
++
++import dev.codeerror.obamium.configuration.ObamiumConfig;
++import net.kyori.adventure.bossbar.BossBar;
++import net.kyori.adventure.text.Component;
++import net.kyori.adventure.text.minimessage.MiniMessage;
++import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
++import net.minecraft.server.level.ServerPlayer;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.scheduler.MinecraftInternalPlugin;
++import org.bukkit.entity.Player;
++import org.bukkit.scheduler.BukkitRunnable;
++import org.jetbrains.annotations.NotNull;
++
++import java.util.*;
++
++public class TPSBarTask extends BukkitRunnable {
++
++    public enum FillMode {
++        TPS,
++        MSPT,
++        PING
++    }
++
++    private static TPSBarTask instance;
++
++    private final Map<UUID, BossBar> tpsBars = new HashMap<>();
++    private boolean started;
++
++    private double tps = 20.0d;
++    private double mspt = 0.0d;
++    private int tick = 0;
++
++    public static TPSBarTask getInstance() {
++        if (instance == null) instance = new TPSBarTask();
++        return instance;
++    }
++
++    public BossBar createTPSBar() {
++        return BossBar.bossBar(Component.text(""), 0.0f, getInstance().getTPSBarColour(), ObamiumConfig.tpsBarOverlay);
++    }
++
++    public void updateTPSBar(@NotNull BossBar tpsBar, @NotNull Player target) {
++        tpsBar.progress(getTPSBarProgress());
++        tpsBar.color(getTPSBarColour());
++        tpsBar.name(
++                MiniMessage.miniMessage().deserialize(
++                        ObamiumConfig.tpsBarTitle,
++                        Placeholder.component("tps", getTPSColour()),
++                        Placeholder.component("mspt", getMSPTColour()),
++                        Placeholder.component("ping", getPingColour(target.getPing()))
++                )
++        );
++    }
++
++    @Override
++    public void run() {
++        if (++tick < ObamiumConfig.tpsBarTickInterval) return;
++
++        tick = 0;
++        tps = Math.max(Math.min(Bukkit.getTPS()[0], 20.0d), 0.0d);
++        mspt = Bukkit.getAverageTickTime();
++
++        Iterator<Map.Entry<UUID, BossBar>> iterator = tpsBars.entrySet().iterator();
++        while (iterator.hasNext()) {
++            Map.Entry<UUID, BossBar> tpsBar = iterator.next();
++            Player target = Bukkit.getPlayer(tpsBar.getKey());
++            if (target == null) {
++                iterator.remove();
++                continue;
++            }
++            updateTPSBar(tpsBar.getValue(), target);
++        }
++    }
++
++    @Override
++    public synchronized void cancel() throws IllegalStateException {
++        super.cancel();
++        new HashSet<>(tpsBars.keySet()).forEach(uuid -> {
++            Player target = Bukkit.getPlayer(uuid);
++            if (target != null) removePlayer(target);
++        });
++        tpsBars.clear();
++    }
++
++    public void start() {
++        stop();
++        runTaskTimerAsynchronously(new MinecraftInternalPlugin(), 1, 1);
++        started = true;
++    }
++
++    public void stop() {
++        if (started) cancel();
++    }
++
++    public static void startAll() {
++        getInstance().start();
++    }
++
++    public static void stopAll() {
++        getInstance().stop();
++    }
++
++    public void addPlayer(Player target) {
++        removePlayer(target);
++        BossBar tpsBar = createTPSBar();
++        tpsBars.put(target.getUniqueId(), tpsBar);
++        updateTPSBar(tpsBar, target);
++        target.showBossBar(tpsBar);
++    }
++
++    public static void addToAll(@NotNull ServerPlayer vanillaTarget) {
++        if (vanillaTarget.getTPSBar()) getInstance().removePlayer(vanillaTarget.getBukkitEntity());
++    }
++
++    public boolean removePlayer(@NotNull Player target) {
++        BossBar tpsBar = tpsBars.remove(target.getUniqueId());
++        if (tpsBar != null) {
++            target.hideBossBar(tpsBar);
++            return true;
++        }
++        return false;
++    }
++
++    public static void removeFromAll(Player target) {
++        getInstance().removePlayer(target);
++    }
++
++    public boolean togglePlayer(Player target) {
++        if (removePlayer(target)) return false;
++        addPlayer(target);
++        return true;
++    }
++
++    private float getTPSBarProgress() {
++        if (ObamiumConfig.tpsBarMode == FillMode.MSPT) return Math.max(Math.min((float) mspt / 50.0F, 1.0F), 0.0F);
++        return Math.max(Math.min((float) tps / 20.0F, 1.0F), 0.0F);
++    }
++
++    private BossBar.Color getTPSBarColour() {
++        if (isGood(ObamiumConfig.tpsBarMode)) {
++            return ObamiumConfig.tpsBarColourGood;
++        } else if (isMedium(ObamiumConfig.tpsBarMode)) {
++            return ObamiumConfig.tpsBarColourMed;
++        }
++        return ObamiumConfig.tpsBarColourLow;
++    }
++
++    private @NotNull Component getTPSColour() {
++        if (isGood(FillMode.TPS)) {
++            return MiniMessage.miniMessage().deserialize(ObamiumConfig.tpsBarTextColourGood, Placeholder.parsed("text", String.format("%.2f", tps)));
++        } else if (isMedium(FillMode.TPS)) {
++            return MiniMessage.miniMessage().deserialize(ObamiumConfig.tpsBarTextColourMed, Placeholder.parsed("text", String.format("%.2f", tps)));
++        }
++        return MiniMessage.miniMessage().deserialize(ObamiumConfig.tpsBarTextColourLow, Placeholder.parsed("text", String.format("%.2f", tps)));
++    }
++
++    private @NotNull Component getMSPTColour() {
++        if (isGood(FillMode.MSPT)) {
++            return MiniMessage.miniMessage().deserialize(ObamiumConfig.tpsBarTextColourGood, Placeholder.parsed("text", String.format("%.2f", mspt)));
++        } else if (isMedium(FillMode.MSPT)) {
++            return MiniMessage.miniMessage().deserialize(ObamiumConfig.tpsBarTextColourMed, Placeholder.parsed("text", String.format("%.2f", mspt)));
++        }
++        return MiniMessage.miniMessage().deserialize(ObamiumConfig.tpsBarTextColourLow, Placeholder.parsed("text", String.format("%.2f", mspt)));
++    }
++
++    private @NotNull Component getPingColour(int ping) {
++        if (isGood(FillMode.PING)) {
++            return MiniMessage.miniMessage().deserialize(ObamiumConfig.tpsBarTextColourGood, Placeholder.parsed("text", String.format("%s", ping)));
++        } else if (isMedium(FillMode.PING)) {
++            return MiniMessage.miniMessage().deserialize(ObamiumConfig.tpsBarTextColourMed, Placeholder.parsed("text", String.format("%s", ping)));
++        }
++        return MiniMessage.miniMessage().deserialize(ObamiumConfig.tpsBarTextColourLow, Placeholder.parsed("text", String.format("%s", ping)));
++    }
++
++    private boolean isGood(FillMode mode) {
++        return isGood(mode, 0);
++    }
++
++    private boolean isGood(@NotNull FillMode mode, int ping) {
++        switch (mode) {
++            case MSPT -> {
++                return mspt < 40;
++            }
++            case TPS -> {
++                return tps >= 19;
++            }
++            case PING -> {
++                return ping < 100;
++            }
++        }
++        return false;
++    }
++
++    private boolean isMedium(FillMode mode) {
++        return isMedium(mode, 0);
++    }
++
++    private boolean isMedium(@NotNull FillMode mode, int ping) {
++        switch (mode) {
++            case MSPT -> {
++                return mspt < 50;
++            }
++            case TPS -> {
++                return tps >= 15;
++            }
++            case PING -> {
++                return ping < 200;
++            }
++        }
++        return false;
++    }
++
++}
+diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
+index ea5f0600d47b0f7c08b96eed91e5de255114637b..38053d9fcfba9b69bb23ede54fb798df5de0b308 100644
+--- a/src/main/java/net/minecraft/commands/Commands.java
++++ b/src/main/java/net/minecraft/commands/Commands.java
+@@ -205,6 +205,7 @@ public class Commands {
+             SetPlayerIdleTimeoutCommand.register(this.dispatcher);
+             StopCommand.register(this.dispatcher);
+             WhitelistCommand.register(this.dispatcher);
++            dev.codeerror.obamium.command.TPSBarCommand.register(this.dispatcher); // Obamium
+         }
+ 
+         if (environment.includeIntegrated) {
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 94f25d32aa18cebe87fa35a954d24d54d73f05ff..78cec12af1f9b21c11645718fa42f7187ba083d5 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1044,6 +1044,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         this.safeShutdown(flag, false);
+     }
+     public void safeShutdown(boolean flag, boolean isRestarting) {
++        dev.codeerror.obamium.task.TPSBarTask.stopAll(); // Obamium
+         this.isRestarting = isRestarting;
+         this.hasLoggedStop = true; // Paper
+         if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper
+diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+index b88d3e4ab245960494043e2c05c87bc3c34f788f..1e76671f51841b93e920efa40ea646a9a1cce30c 100644
+--- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -228,8 +228,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+         // Paper end
+         gg.pufferfish.pufferfish.PufferfishConfig.load(); // Pufferfish
+         gg.pufferfish.pufferfish.PufferfishCommand.init(); // Pufferfish
+-        dev.codeerror.obamium.ObamiumConfig.loadConfig(); // Obamium
+-        dev.codeerror.obamium.ObamiumCommand.register(); // Obamium
++        dev.codeerror.obamium.configuration.ObamiumConfig.loadConfig(); // Obamium
++        dev.codeerror.obamium.command.ObamiumCommand.register(); // Obamium
+ 
+         this.setPvpAllowed(dedicatedserverproperties.pvp);
+         this.setFlightAllowed(dedicatedserverproperties.allowFlight);
+@@ -285,7 +285,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+ 
+         if (!this.usesAuthentication()) {
+             // Obamium start - toggleable offline console warning.
+-            if (dev.codeerror.obamium.ObamiumConfig.offlineWarning) {
++            if (dev.codeerror.obamium.configuration.ObamiumConfig.offlineWarning) {
+                 DedicatedServer.LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
+                 DedicatedServer.LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
+                 // Spigot start
+@@ -347,6 +347,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
+             }
+ 
+             if (gg.pufferfish.pufferfish.PufferfishConfig.enableAsyncMobSpawning) mobSpawnExecutor.start(); // Pufferfish
++            dev.codeerror.obamium.task.TPSBarTask.startAll(); // Obamium
+             return true;
+         }
+     }
+diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+index 353463084d90eb684717e65c56da52cd25a1e375..e9fb1aaff6b1f4ffa9362026f5e055823cc4d627 100644
+--- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
++++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
+@@ -260,6 +260,7 @@ public class ServerPlayer extends Player {
+     public Integer clientViewDistance;
+     // CraftBukkit end
+     public PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper
++    private boolean tpsBar = false; // Obamium
+ 
+     public double lastEntitySpawnRadiusSquared; // Paper - optimise isOutsideRange, this field is in blocks
+     public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> cachedSingleHashSet; // Paper
+@@ -480,6 +481,7 @@ public class ServerPlayer extends Player {
+             }
+         }
+ 
++        if (nbt.contains("Obamium.TPSBar")) this.tpsBar = nbt.getBoolean("Obamium.TPSBar"); // Obamium
+     }
+ 
+     @Override
+@@ -540,6 +542,7 @@ public class ServerPlayer extends Player {
+         }
+         this.getBukkitEntity().setExtraData(nbt); // CraftBukkit
+ 
++        nbt.putBoolean("Obamium.TPSBar", this.tpsBar); // Obamium
+     }
+ 
+     // CraftBukkit start - World fallback code, either respawn location or global spawn
+@@ -2489,4 +2492,14 @@ public class ServerPlayer extends Player {
+     // CraftBukkit end
+ 
+     public final int getViewDistance() { throw new UnsupportedOperationException("Use PlayerChunkLoader"); } // Paper - placeholder
++
++    // Obamium start - TPSBar methods.
++    public boolean getTPSBar() {
++        return this.tpsBar;
++    }
++
++    public void setTPSBar(boolean tpsBar) {
++        this.tpsBar = tpsBar;
++    }
++    // Obamium end
+ }
+diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
+index 20cdfdb3b9351f74e89bc45b3ab972384165659a..fa6bba586093ab442f76144b7d793503080f6d63 100644
+--- a/src/main/java/net/minecraft/server/players/PlayerList.java
++++ b/src/main/java/net/minecraft/server/players/PlayerList.java
+@@ -496,6 +496,7 @@ public abstract class PlayerList {
+             scoreboard.addPlayerToTeam(player.getScoreboardName(), collideRuleTeam);
+         }
+         // Paper end
++        dev.codeerror.obamium.task.TPSBarTask.addToAll(player); // Obamium
+         // CraftBukkit - Moved from above, added world
+         PlayerList.LOGGER.info("{}[{}] logged in with entity id {} at ([{}]{}, {}, {})", player.getName().getString(), s1, player.getId(), worldserver1.serverLevelData.getLevelName(), player.getX(), player.getY(), player.getZ());
+     }
+@@ -606,6 +607,8 @@ public abstract class PlayerList {
+     }
+     public net.kyori.adventure.text.Component remove(ServerPlayer entityplayer, net.kyori.adventure.text.Component leaveMessage) {
+         // Paper end
++        dev.codeerror.obamium.task.TPSBarTask.removeFromAll(entityplayer.getBukkitEntity()); // Obamium
++
+         ServerLevel worldserver = entityplayer.getLevel();
+ 
+         entityplayer.awardStat(Stats.LEAVE_GAME);
