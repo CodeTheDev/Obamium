@@ -112,7 +112,7 @@ index 1ea7a7b90464bcfc865ccfd9644b8389e30483d4..c8d8bc3f6c1cabdde308780115496ab4
  import net.kyori.adventure.text.minimessage.MiniMessage;
 diff --git a/src/main/java/dev/codeerror/obamium/command/TPSBarCommand.java b/src/main/java/dev/codeerror/obamium/command/TPSBarCommand.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..237ba5ed45324c5c691a61d3973155e041d71d24
+index 0000000000000000000000000000000000000000..4074c6e929765f5014aa474caad10f0be1d072ec
 --- /dev/null
 +++ b/src/main/java/dev/codeerror/obamium/command/TPSBarCommand.java
 @@ -0,0 +1,43 @@
@@ -320,7 +320,7 @@ index 0000000000000000000000000000000000000000..600d6edc85d632e3e555625d40c5d11c
 +}
 diff --git a/src/main/java/dev/codeerror/obamium/task/TPSBarTask.java b/src/main/java/dev/codeerror/obamium/task/TPSBarTask.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..09e060e876581aadd4b4bd22e116286b036ce8dd
+index 0000000000000000000000000000000000000000..003d601d21f3f6d84cf7cd3952853d56b204ba98
 --- /dev/null
 +++ b/src/main/java/dev/codeerror/obamium/task/TPSBarTask.java
 @@ -0,0 +1,214 @@
@@ -563,7 +563,7 @@ index 94f25d32aa18cebe87fa35a954d24d54d73f05ff..78cec12af1f9b21c11645718fa42f718
          this.hasLoggedStop = true; // Paper
          if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index b88d3e4ab245960494043e2c05c87bc3c34f788f..1e76671f51841b93e920efa40ea646a9a1cce30c 100644
+index b20579216e93ac209a431583d462db5d61fae2b1..9f1329ff8e9d0ea6b69a1c429ef87938d8cd43b9 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -228,8 +228,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
