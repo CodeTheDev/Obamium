@@ -551,10 +551,10 @@ index ea5f0600d47b0f7c08b96eed91e5de255114637b..38053d9fcfba9b69bb23ede54fb798df
  
          if (environment.includeIntegrated) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 94f25d32aa18cebe87fa35a954d24d54d73f05ff..78cec12af1f9b21c11645718fa42f7187ba083d5 100644
+index a7ee59a9ce090f7cc2da3df3d587f835ea0a354c..e5a4b20de8b6f9ff6a2ce799ee2966477a9fdd82 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1044,6 +1044,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1045,6 +1045,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          this.safeShutdown(flag, false);
      }
      public void safeShutdown(boolean flag, boolean isRestarting) {
@@ -595,10 +595,10 @@ index b20579216e93ac209a431583d462db5d61fae2b1..9f1329ff8e9d0ea6b69a1c429ef87938
          }
      }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 353463084d90eb684717e65c56da52cd25a1e375..e9fb1aaff6b1f4ffa9362026f5e055823cc4d627 100644
+index 5f0d934399991ae94795ad0a94da689c242ffeba..4502fc3a39237044b3a3d3f2af7b66ec9b53c796 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -260,6 +260,7 @@ public class ServerPlayer extends Player {
+@@ -261,6 +261,7 @@ public class ServerPlayer extends Player {
      public Integer clientViewDistance;
      // CraftBukkit end
      public PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper
@@ -606,7 +606,7 @@ index 353463084d90eb684717e65c56da52cd25a1e375..e9fb1aaff6b1f4ffa9362026f5e05582
  
      public double lastEntitySpawnRadiusSquared; // Paper - optimise isOutsideRange, this field is in blocks
      public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> cachedSingleHashSet; // Paper
-@@ -480,6 +481,7 @@ public class ServerPlayer extends Player {
+@@ -481,6 +482,7 @@ public class ServerPlayer extends Player {
              }
          }
  
@@ -614,7 +614,7 @@ index 353463084d90eb684717e65c56da52cd25a1e375..e9fb1aaff6b1f4ffa9362026f5e05582
      }
  
      @Override
-@@ -540,6 +542,7 @@ public class ServerPlayer extends Player {
+@@ -541,6 +543,7 @@ public class ServerPlayer extends Player {
          }
          this.getBukkitEntity().setExtraData(nbt); // CraftBukkit
  
@@ -622,7 +622,7 @@ index 353463084d90eb684717e65c56da52cd25a1e375..e9fb1aaff6b1f4ffa9362026f5e05582
      }
  
      // CraftBukkit start - World fallback code, either respawn location or global spawn
-@@ -2489,4 +2492,14 @@ public class ServerPlayer extends Player {
+@@ -2490,4 +2493,14 @@ public class ServerPlayer extends Player {
      // CraftBukkit end
  
      public final int getViewDistance() { throw new UnsupportedOperationException("Use PlayerChunkLoader"); } // Paper - placeholder

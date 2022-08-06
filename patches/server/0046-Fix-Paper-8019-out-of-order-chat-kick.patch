@@ -8,10 +8,10 @@ This will most likely be a temporary patch until a solution is implemented
 on either Paper or Velocity.
 
 diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index e6213b6924f611bfb85e43fe5a4c4582639b7abc..19a4e67a2441c3d4e46a7f172d2c9767c5e2ec09 100644
+index 1581215f7e8348e40d248c8e3d5ef43143e69579..8169e04c0986895ed07716cf1f965ab6ca232f9e 100644
 --- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -2161,17 +2161,20 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Ser
+@@ -2167,17 +2167,20 @@ public class ServerGamePacketListenerImpl implements ServerPlayerConnection, Ser
      private boolean tryHandleChat(String s, Instant instant) {
          if (!this.updateChatOrder(instant)) {
              ServerGamePacketListenerImpl.LOGGER.warn("{} sent out-of-order chat: '{}'; {} > {}", this.player.getName().getString(), s, this.lastChatTimeStamp.get().getEpochSecond(), instant.getEpochSecond()); // Paper
