@@ -5,7 +5,7 @@ Subject: [PATCH] Obamium branding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 2374cc9bab5039d0a0dc11d4b2ec573ab75778a7..992c135498571a61f8e9dc5aaf2ef69b18cde95e 100644
+index 2374cc9bab5039d0a0dc11d4b2ec573ab75778a7..c6a4a9329834f4abb31e008c1d0a32b5327e57f9 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -9,8 +9,12 @@ plugins {
@@ -16,7 +16,7 @@ index 2374cc9bab5039d0a0dc11d4b2ec573ab75778a7..992c135498571a61f8e9dc5aaf2ef69b
 -    implementation(project(":paper-mojangapi"))
 +    // Obamium start
 +    implementation(project(":obamium-api"))
-+    implementation("io.papermc.paper:paper-mojangapi:1.19-R0.1-SNAPSHOT") {
++    implementation("io.papermc.paper:paper-mojangapi:1.19.2-R0.1-SNAPSHOT") {
 +        exclude("io.papermc.paper", "paper-api")
 +    }
 +    // Obamium end
@@ -222,10 +222,10 @@ index 0000000000000000000000000000000000000000..f10baacbd7c6d1b9905583d3e13d2391
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 35a5cc8ed861401d3dd28b08ebc5d40aad82b0df..072bc27633c1d3d243cfdca94b091e7a6ec0abc4 100644
+index d2161a3c3b9a2b2d463ac778656c95167c10a49d..b39fcf51e5d0ab79031cdbf6b4b90d3cbb1f5b97 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1655,7 +1655,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1673,7 +1673,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
@@ -235,10 +235,10 @@ index 35a5cc8ed861401d3dd28b08ebc5d40aad82b0df..072bc27633c1d3d243cfdca94b091e7a
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index bfde5bbcccfaa754ec6bdf4f3817981a93e465bd..cc11818a624c4700ac7c4453ff54c5a8cc95dbe9 100644
+index b443aba38258f501f8f00be6b055f07b709277c4..714528946e79bb7235e05486b3d1f952cceb11ac 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -246,7 +246,7 @@ import javax.annotation.Nullable; // Paper
+@@ -248,7 +248,7 @@ import javax.annotation.Nullable; // Paper
  import javax.annotation.Nonnull; // Paper
  
  public final class CraftServer implements Server {
@@ -248,7 +248,7 @@ index bfde5bbcccfaa754ec6bdf4f3817981a93e465bd..cc11818a624c4700ac7c4453ff54c5a8
      private final String bukkitVersion = Versioning.getBukkitVersion();
      private final Logger logger = Logger.getLogger("Minecraft");
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
-index 7c1e510a0ad4b69c1fedc3367a8216046efb228e..18e861d0a64eea10a267a5a4466b89cc8646ddf8 100644
+index 1628913b1e9b91e68dcd942a38da4aed95b12d4a..9ddc95b49220237db4546451afee8708fb51b487 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
 @@ -430,7 +430,7 @@ public final class CraftMagicNumbers implements UnsafeValues {

@@ -539,10 +539,10 @@ index 0000000000000000000000000000000000000000..003d601d21f3f6d84cf7cd3952853d56
 +
 +}
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index ea5f0600d47b0f7c08b96eed91e5de255114637b..38053d9fcfba9b69bb23ede54fb798df5de0b308 100644
+index 7c96f7fc5997761426a0c62cad0cab5cc668f282..0bed632ec84d646ded1cb3af59383db8ee8fcd15 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
-@@ -205,6 +205,7 @@ public class Commands {
+@@ -207,6 +207,7 @@ public class Commands {
              SetPlayerIdleTimeoutCommand.register(this.dispatcher);
              StopCommand.register(this.dispatcher);
              WhitelistCommand.register(this.dispatcher);
@@ -551,10 +551,10 @@ index ea5f0600d47b0f7c08b96eed91e5de255114637b..38053d9fcfba9b69bb23ede54fb798df
  
          if (environment.includeIntegrated) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index a7ee59a9ce090f7cc2da3df3d587f835ea0a354c..e5a4b20de8b6f9ff6a2ce799ee2966477a9fdd82 100644
+index e21c3748c4f6ba3caed3817859946d9edcfce4c8..15bb4ed9db862dc7d72ef6ee79c4f6d5b0978015 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1045,6 +1045,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1049,6 +1049,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          this.safeShutdown(flag, false);
      }
      public void safeShutdown(boolean flag, boolean isRestarting) {
@@ -563,7 +563,7 @@ index a7ee59a9ce090f7cc2da3df3d587f835ea0a354c..e5a4b20de8b6f9ff6a2ce799ee296647
          this.hasLoggedStop = true; // Paper
          if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index b20579216e93ac209a431583d462db5d61fae2b1..9f1329ff8e9d0ea6b69a1c429ef87938d8cd43b9 100644
+index b18e19ccd0e9c511daed614567b91e88f459a826..7814cb2c2045ac63900a93357a3c58de0134c7ef 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -228,8 +228,8 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -595,10 +595,10 @@ index b20579216e93ac209a431583d462db5d61fae2b1..9f1329ff8e9d0ea6b69a1c429ef87938
          }
      }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index 5f0d934399991ae94795ad0a94da689c242ffeba..4502fc3a39237044b3a3d3f2af7b66ec9b53c796 100644
+index 3615576c24d5d6790a6894a91180de25fa0e5a9c..aa1c9c049f62b75c32791da261314ed4989c1f12 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-@@ -261,6 +261,7 @@ public class ServerPlayer extends Player {
+@@ -262,6 +262,7 @@ public class ServerPlayer extends Player {
      public Integer clientViewDistance;
      // CraftBukkit end
      public PlayerNaturallySpawnCreaturesEvent playerNaturallySpawnedEvent; // Paper
@@ -606,7 +606,7 @@ index 5f0d934399991ae94795ad0a94da689c242ffeba..4502fc3a39237044b3a3d3f2af7b66ec
  
      public double lastEntitySpawnRadiusSquared; // Paper - optimise isOutsideRange, this field is in blocks
      public final com.destroystokyo.paper.util.misc.PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<ServerPlayer> cachedSingleHashSet; // Paper
-@@ -481,6 +482,7 @@ public class ServerPlayer extends Player {
+@@ -482,6 +483,7 @@ public class ServerPlayer extends Player {
              }
          }
  
@@ -614,7 +614,7 @@ index 5f0d934399991ae94795ad0a94da689c242ffeba..4502fc3a39237044b3a3d3f2af7b66ec
      }
  
      @Override
-@@ -541,6 +543,7 @@ public class ServerPlayer extends Player {
+@@ -542,6 +544,7 @@ public class ServerPlayer extends Player {
          }
          this.getBukkitEntity().setExtraData(nbt); // CraftBukkit
  
@@ -622,7 +622,7 @@ index 5f0d934399991ae94795ad0a94da689c242ffeba..4502fc3a39237044b3a3d3f2af7b66ec
      }
  
      // CraftBukkit start - World fallback code, either respawn location or global spawn
-@@ -2490,4 +2493,14 @@ public class ServerPlayer extends Player {
+@@ -2484,4 +2487,14 @@ public class ServerPlayer extends Player {
      // CraftBukkit end
  
      public final int getViewDistance() { throw new UnsupportedOperationException("Use PlayerChunkLoader"); } // Paper - placeholder
@@ -638,10 +638,10 @@ index 5f0d934399991ae94795ad0a94da689c242ffeba..4502fc3a39237044b3a3d3f2af7b66ec
 +    // Obamium end
  }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 20cdfdb3b9351f74e89bc45b3ab972384165659a..fa6bba586093ab442f76144b7d793503080f6d63 100644
+index 5999d85e38951503fc83b40cfe39671921ae5088..2a78c2682aac73c935c83e2dfe98b5211a9880cc 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
-@@ -496,6 +496,7 @@ public abstract class PlayerList {
+@@ -503,6 +503,7 @@ public abstract class PlayerList {
              scoreboard.addPlayerToTeam(player.getScoreboardName(), collideRuleTeam);
          }
          // Paper end
@@ -649,7 +649,7 @@ index 20cdfdb3b9351f74e89bc45b3ab972384165659a..fa6bba586093ab442f76144b7d793503
          // CraftBukkit - Moved from above, added world
          PlayerList.LOGGER.info("{}[{}] logged in with entity id {} at ([{}]{}, {}, {})", player.getName().getString(), s1, player.getId(), worldserver1.serverLevelData.getLevelName(), player.getX(), player.getY(), player.getZ());
      }
-@@ -606,6 +607,8 @@ public abstract class PlayerList {
+@@ -613,6 +614,8 @@ public abstract class PlayerList {
      }
      public net.kyori.adventure.text.Component remove(ServerPlayer entityplayer, net.kyori.adventure.text.Component leaveMessage) {
          // Paper end
