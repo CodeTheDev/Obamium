@@ -5,7 +5,7 @@ Subject: [PATCH] Obamium branding
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 2374cc9bab5039d0a0dc11d4b2ec573ab75778a7..c6a4a9329834f4abb31e008c1d0a32b5327e57f9 100644
+index 44e0f265432487fe5c3c00c5245041298ade16a0..6b8837280559af1d13e2a6bec96f68c2da30c1b5 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -9,8 +9,12 @@ plugins {
@@ -92,7 +92,7 @@ index 7b1843e16745ca8db2244e17490d291401f22679..f5b64d494299f372379ef5fcf795cc8a
                  metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
                      Map<String, Map<String, Integer>> map = new HashMap<>();
 diff --git a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
-index b0390eedb507d27426d1e1d73bd4ab63aec89ebe..6af519f2c3b5eeb796251dbf713a18e6e511d50a 100644
+index c5d5648f4ca603ef2b1df723b58f9caf4dd3c722..8c6264e3a318365644f323fb79b7bca865398ae6 100644
 --- a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
 +++ b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
 @@ -17,7 +17,7 @@ public final class PaperConsole extends SimpleTerminalConsole {
@@ -222,10 +222,10 @@ index 0000000000000000000000000000000000000000..f10baacbd7c6d1b9905583d3e13d2391
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index d2161a3c3b9a2b2d463ac778656c95167c10a49d..b39fcf51e5d0ab79031cdbf6b4b90d3cbb1f5b97 100644
+index ce81ba5345c8d2fde8a2534b9673275c7e86af8b..7eb32da071e8397a07bea3b828e7ed520769c426 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1673,7 +1673,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -1654,7 +1654,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
  
      @DontObfuscate
      public String getServerModName() {
@@ -235,7 +235,7 @@ index d2161a3c3b9a2b2d463ac778656c95167c10a49d..b39fcf51e5d0ab79031cdbf6b4b90d3c
  
      public SystemReport fillSystemReport(SystemReport details) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index b443aba38258f501f8f00be6b055f07b709277c4..714528946e79bb7235e05486b3d1f952cceb11ac 100644
+index 111f8276f26350a5c62a7b8577b4598978b5355d..d1b310952505f0f688622ad35e8380d2545e48d9 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -248,7 +248,7 @@ import javax.annotation.Nullable; // Paper
