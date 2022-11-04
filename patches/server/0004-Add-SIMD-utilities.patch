@@ -5,10 +5,10 @@ Subject: [PATCH] Add SIMD utilities
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 43e649a7b207beecba5bb3914048a60975002f78..0d59fee707768ba58da7a850b6158fae0f030ef2 100644
+index e2431c46ba01bdd88b14cb56440f18d9d38bdb97..4ad55437e174448f58c67f767a1ec92090af1dd3 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -63,6 +63,14 @@ dependencies {
+@@ -61,6 +61,14 @@ dependencies {
  }
  
  val craftbukkitPackageVersion = "1_19_R1" // Paper

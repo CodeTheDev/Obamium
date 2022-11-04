@@ -44,10 +44,10 @@ index 56a5a31b41d00ba73259a7eda5c57d08570d3e6e..a125abc75ed2bbd905c8fdec442416a4
      public static boolean throttleInactiveGoalSelectorTick;
  	private static void inactiveGoalSelectorThrottle() {
 diff --git a/src/main/java/net/minecraft/world/entity/Entity.java b/src/main/java/net/minecraft/world/entity/Entity.java
-index d7ea828c2ae8c7db27b12ccdb3206a8d9cd1b578..bf17305137f61455cc477515e054e6a65f976c45 100644
+index 881535ac0a034c381a88ae75cdb60699bdcae8f4..26b42474a94ccabd8cfcca39e4c37fb14852cbb8 100644
 --- a/src/main/java/net/minecraft/world/entity/Entity.java
 +++ b/src/main/java/net/minecraft/world/entity/Entity.java
-@@ -815,6 +815,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
+@@ -814,6 +814,12 @@ public abstract class Entity implements Nameable, EntityAccess, CommandSource {
      // CraftBukkit end
  
      public void baseTick() {
@@ -61,7 +61,7 @@ index d7ea828c2ae8c7db27b12ccdb3206a8d9cd1b578..bf17305137f61455cc477515e054e6a6
          if (firstTick && this instanceof net.minecraft.world.entity.NeutralMob neutralMob) neutralMob.tickInitialPersistentAnger(level); // Paper - Update last hurt when ticking
          this.feetBlockState = null;
 diff --git a/src/main/java/net/minecraft/world/entity/EntityType.java b/src/main/java/net/minecraft/world/entity/EntityType.java
-index c220898a5836bdd60aedb993ea063842b146946c..bbe9568b8df69f5f1ef08dc02dc8ee6a5c63f13c 100644
+index 885b0aaf149638da917b0fcc25d6262aed1e00be..b44322c337bcded94c60e1761a3891013ae1dd1a 100644
 --- a/src/main/java/net/minecraft/world/entity/EntityType.java
 +++ b/src/main/java/net/minecraft/world/entity/EntityType.java
 @@ -306,6 +306,7 @@ public class EntityType<T extends Entity> implements EntityTypeTest<Entity, T> {

@@ -399,7 +399,7 @@ index 7c96f7fc5997761426a0c62cad0cab5cc668f282..0bed632ec84d646ded1cb3af59383db8
  
          if (environment.includeIntegrated) {
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index cf9ee035036ef921a11183df88683e686aa8cd69..d10a47f6269f6d5ff8c7687e8927010188251d80 100644
+index 203789dd817dcc8b27e15e4f0df0019fd2328e88..d42e2f3bdd547dd08fcd074219c3c6caa61b0a26 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1021,6 +1021,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
@@ -411,7 +411,7 @@ index cf9ee035036ef921a11183df88683e686aa8cd69..d10a47f6269f6d5ff8c7687e89270101
          this.hasLoggedStop = true; // Paper
          if (isDebugging()) io.papermc.paper.util.TraceUtil.dumpTraceForThread("Server stopped"); // Paper
 diff --git a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
-index dea78541f711521999c68bba5fa2f28aa4d19754..28b087f4ce72c110ec2b35ba58f889cb0978dedf 100644
+index e91eaf61930584f5a5164d83b2b6efad054cd7c9..d58472747c979e3152e4d798933bed5c58f17f0c 100644
 --- a/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -229,7 +229,7 @@ public class DedicatedServer extends MinecraftServer implements ServerInterface
@@ -432,7 +432,7 @@ index dea78541f711521999c68bba5fa2f28aa4d19754..28b087f4ce72c110ec2b35ba58f889cb
          }
      }
 diff --git a/src/main/java/net/minecraft/server/level/ServerPlayer.java b/src/main/java/net/minecraft/server/level/ServerPlayer.java
-index af7acb628b84539b1ee5ef1934f75f091c4cd91e..fabafd8cb6a1d3f8663e0b04b14057e4f02afe50 100644
+index 5819e8e5e3c6f87eb123cf16091ea74357d53b3b..6a73eaeea32757cdfd2e7862a3f7cf8df5c533c3 100644
 --- a/src/main/java/net/minecraft/server/level/ServerPlayer.java
 +++ b/src/main/java/net/minecraft/server/level/ServerPlayer.java
 @@ -261,6 +261,7 @@ public class ServerPlayer extends Player {
@@ -443,7 +443,7 @@ index af7acb628b84539b1ee5ef1934f75f091c4cd91e..fabafd8cb6a1d3f8663e0b04b14057e4
  
      public boolean isRealPlayer; // Paper
      public double lastEntitySpawnRadiusSquared; // Paper - optimise isOutsideRange, this field is in blocks
-@@ -467,6 +468,7 @@ public class ServerPlayer extends Player {
+@@ -486,6 +487,7 @@ public class ServerPlayer extends Player {
              }
          }
  
@@ -451,7 +451,7 @@ index af7acb628b84539b1ee5ef1934f75f091c4cd91e..fabafd8cb6a1d3f8663e0b04b14057e4
      }
  
      @Override
-@@ -527,6 +529,7 @@ public class ServerPlayer extends Player {
+@@ -546,6 +548,7 @@ public class ServerPlayer extends Player {
          }
          this.getBukkitEntity().setExtraData(nbt); // CraftBukkit
  
@@ -459,7 +459,7 @@ index af7acb628b84539b1ee5ef1934f75f091c4cd91e..fabafd8cb6a1d3f8663e0b04b14057e4
      }
  
      // CraftBukkit start - World fallback code, either respawn location or global spawn
-@@ -2468,4 +2471,14 @@ public class ServerPlayer extends Player {
+@@ -2501,4 +2504,14 @@ public class ServerPlayer extends Player {
          return (CraftPlayer) super.getBukkitEntity();
      }
      // CraftBukkit end
@@ -475,7 +475,7 @@ index af7acb628b84539b1ee5ef1934f75f091c4cd91e..fabafd8cb6a1d3f8663e0b04b14057e4
 +    // Obamium end
  }
 diff --git a/src/main/java/net/minecraft/server/players/PlayerList.java b/src/main/java/net/minecraft/server/players/PlayerList.java
-index 06eda955f96b5fe2d08ed0d39229c7a6ebb88931..030fefa8e75ac77c62e6b538c2aaba98e0d97362 100644
+index 3be9352ae9b0b84acf07064b45562ceffd30391b..84d11b6035197378432e94ed864587aa6da21e35 100644
 --- a/src/main/java/net/minecraft/server/players/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/players/PlayerList.java
 @@ -503,6 +503,7 @@ public abstract class PlayerList {
